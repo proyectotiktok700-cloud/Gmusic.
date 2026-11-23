@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#050805">
+<title>GMUSIC — SoundCloud Edition</title>
+<style>
+:root{--green:#b7ff00;--bg:#050705;--panel:#101610;--panel2:#151e13;--line:#293722;--muted:#a6b49c}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--green);font-family:Inter,system-ui,-apple-system,Arial,sans-serif;padding-bottom:35px}
+header{height:72px;padding:0 5vw;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line);position:sticky;top:0;background:#050705ed;backdrop-filter:blur(14px);z-index:10}
+.logo{font-weight:1000;font-size:27px;letter-spacing:2px}.logo span{color:#efffdc}.tag{font-size:10px;letter-spacing:2px;color:var(--muted)}
+.layout{display:grid;grid-template-columns:220px minmax(0,1fr);max-width:1500px;margin:auto;min-height:calc(100vh - 72px)}
+aside{border-right:1px solid var(--line);padding:25px 16px;position:sticky;top:72px;height:calc(100vh - 72px)}
+nav{display:grid;gap:8px}nav button,.artistbtn{background:transparent;border:0;color:#c6d3bc;text-align:left;padding:13px;border-radius:10px;font-weight:750;cursor:pointer}nav button.active,nav button:hover,.artistbtn:hover{background:#192315;color:var(--green)}
+.aside-note{font-size:11px;color:#87957c;line-height:1.5;margin:25px 10px}
+main{padding:26px clamp(16px,4vw,55px);min-width:0}.hero{padding:28px 0 22px}.eyebrow{font-size:10px;letter-spacing:3px;font-weight:900;color:#9eb77c}.hero h1{color:var(--coral);font-size:clamp(42px,7vw,86px);line-height:.92;letter-spacing:-4px;margin:12px 0;color:var(--green)}.hero p{max-width:650px;color:#bdc9b4;line-height:1.65}
+.sectionhead{display:flex;justify-content:space-between;align-items:end;gap:15px;margin:25px 0 14px}.sectionhead h2{margin:0;font-size:23px;color:var(--coral)}.count{font-size:11px;color:var(--muted)}
+.searchrow{display:flex;gap:9px;max-width:700px;margin:12px 0 28px}.searchrow input{flex:1;min-width:0;background:#101610;color:white;border:1px solid var(--line);border-radius:12px;padding:14px;font-size:15px}.searchrow button,.primary{background:var(--green);color:#071000;border:0;border-radius:11px;padding:12px 16px;font-weight:900;cursor:pointer}
+.artistchips{display:flex;gap:8px;overflow:auto;padding:3px 0 14px}.artistchips button{white-space:nowrap;border:1px solid var(--line);background:#11180f;color:var(--green);border-radius:30px;padding:10px 15px;cursor:pointer}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:16px}.card{background:linear-gradient(145deg,#131d11,#0c100b);border:1px solid var(--line);border-radius:17px;padding:15px;overflow:hidden}.cover{height:125px;border-radius:12px;background:radial-gradient(circle at 70% 25%,#426117,#11180d 60%);display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:1000;color:#eaffbf;letter-spacing:3px}.card h3{color:var(--coral);margin:13px 0 4px;font-size:17px}.card p{font-size:12px;color:var(--muted);margin:0 0 12px;line-height:1.5}.embed{width:100%;height:166px;border:0;border-radius:11px;background:#111}.embed.tall{height:310px}
+.badge{display:inline-block;font-size:9px;letter-spacing:1.4px;color:#0a1200;background:var(--green);padding:5px 8px;border-radius:5px;font-weight:1000;margin-bottom:8px}
+.info{background:#11180f;border:1px solid var(--line);border-radius:14px;padding:15px;color:#b9c6af;font-size:12px;line-height:1.6;margin:20px 0}
+#results{display:grid;gap:12px}.artist-result{border:1px solid var(--line);border-radius:13px;padding:14px;background:#101610}.artist-result b{color:var(--coral)}
+.hidden{display:none!important}
+footer{text-align:center;color:#74816c;font-size:10px;padding:30px 15px;border-top:1px solid var(--line);margin-top:50px}
+@media(max-width:760px){.layout{display:block}aside{position:sticky;top:72px;height:auto;padding:8px 12px;border-right:0;border-bottom:1px solid var(--line);z-index:8;background:#080b07}nav{display:flex;overflow:auto}nav button{white-space:nowrap;padding:10px 12px;font-size:12px} .aside-note{display:none}main{padding:16px}.hero{padding:20px 0 10px}.hero h1{letter-spacing:-2px}.cover{height:100px}}
+
+.player-controls{display:flex;align-items:center;gap:8px;margin-top:10px;flex-wrap:wrap}
+.player-controls button{background:#192315;color:var(--green);border:1px solid var(--line);border-radius:9px;padding:9px 12px;font-weight:800;cursor:pointer}
+.player-controls button:active{transform:scale(.97)}
+.player-controls .play-btn{background:var(--green);color:#071000}
+.player-progress{width:100%;height:8px;accent-color:var(--green);cursor:pointer}
+.player-time{font-size:10px;color:var(--muted);min-width:82px;text-align:right}
+.player-status{font-size:10px;color:var(--muted);min-height:14px;margin-top:4px}
+.search-player{margin-top:18px}
+@media(max-width:760px){.player-controls button{padding:10px 13px}.player-controls{gap:6px}}
+</style>
+</head>
+<body>
+<header><div><div class="logo">G<span>MUSIC</span></div><div class="tag">SOUNDCLOUD EDITION · URBAN SOUND</div></div><div class="tag">BETA 02</div></header>
+<div class="layout">
+<aside>
+<nav>
+<button class="active" data-view="home">⌂ &nbsp; INICIO</button>
+<button data-view="library">♫ &nbsp; BIBLIOTECA</button>
+<button data-view="artists">♙ &nbsp; ARTISTAS</button>
+<button data-view="about">ⓘ &nbsp; INFO</button>
+</nav>
+<div class="aside-note">GMUSIC reúne selecciones públicas de SoundCloud en una interfaz propia. El reproductor oficial conserva los controles y atribución de SoundCloud.</div>
+</aside>
+<main>
+<section id="home">
+<div class="hero"><div class="eyebrow">TU MÚSICA · TU ESPACIO</div><h1>PLAY<br>LOUDER.</h1><p>Explora selecciones urbanas y reproduce las listas directamente aquí, sin copiar enlaces. Pulsa una selección para escucharla en el reproductor integrado.</p></div>
+<div class="searchrow"><input id="query" placeholder="Busca un artista o canción en SoundCloud…"><button id="searchBtn">BUSCAR ↗</button></div>
+<div class="sectionhead"><h2>Explora por género</h2><span class="count">TRAP · REGGAETÓN · MÁS</span></div><div class="artistchips" id="genreChips"></div><div id="genreResults" class="search-player"></div>
+<div id="searchResults" class="search-player"></div><div class="sectionhead"><h2>Selecciones destacadas</h2><span class="count">REPRODUCTORES INTEGRADOS</span></div>
+<div class="cards">
+<article class="card"><div class="cover">MORAD</div><span class="badge">115 CANCIONES</span><h3>Morad — selección</h3><p>Lista pública encontrada en SoundCloud. Incluye temas de Morad y colaboraciones.</p><iframe class="embed" title="Morad SoundCloud playlist" scrolling="no" allow="autoplay" src="https://w.soundcloud.com/player/?url=https%3A//soundcloud.com/alessandro-braia-660659496/sets/morad&color=%23b7ff00&auto_play=false&hide_related=true&show_comments=false&show_user=true&show_reposts=false&visual=true"></iframe></article>
+<article class="card"><div class="cover">ELADIO</div><span class="badge">207 CANCIONES</span><h3>Eladio Carrión — selección</h3><p>Playlist pública con canciones de Eladio Carrión y colaboraciones.</p><iframe class="embed" title="Eladio SoundCloud playlist" scrolling="no" allow="autoplay" src="https://w.soundcloud.com/player/?url=https%3A//soundcloud.com/michael-penaloza-966423600/sets/eladio-carrion&color=%23b7ff00&auto_play=false&hide_related=true&show_comments=false&show_user=true&show_reposts=false&visual=true"></iframe></article>
+<article class="card"><div class="cover">YUNG BEEF</div><span class="badge">32 CANCIONES</span><h3>Yung Beef — YTTQ / CQTQ</h3><p>Selección centrada en Yung Beef, GOA y colaboraciones.</p><iframe class="embed" title="Yung Beef SoundCloud playlist" scrolling="no" allow="autoplay" src="https://w.soundcloud.com/player/?url=https%3A//soundcloud.com/francisco-garrido-403985604/sets/yttq-cqtq&color=%23b7ff00&auto_play=false&hide_related=true&show_comments=false&show_user=true&show_reposts=false&visual=true"></iframe></article>
+<article class="card"><div class="cover">HADES66</div><span class="badge">SELECCIÓN MIXTA</span><h3>Hades66 — selección urbana</h3><p>Lista pública con temas de Hades66 y otros artistas urbanos.</p><iframe class="embed" title="Hades66 SoundCloud playlist" scrolling="no" allow="autoplay" src="https://w.soundcloud.com/player/?url=https%3A//soundcloud.com/samuel-maldonado-723365644/sets/mi-playlist&color=%23b7ff00&auto_play=false&hide_related=true&show_comments=false&show_user=true&show_reposts=false&visual=true"></iframe></article>
+<article class="card"><div class="cover">SAIKO</div><span class="badge">18 PISTAS</span><h3>Saiko — remixes y colaboraciones</h3><p>Selección comunitaria; contiene remixes y colaboraciones, no es un catálogo oficial.</p><iframe class="embed" title="Saiko SoundCloud playlist" scrolling="no" allow="autoplay" src="https://w.soundcloud.com/player/?url=https%3A//soundcloud.com/fanny-vega-730041900/sets/saiko-playlist&color=%23b7ff00&auto_play=false&hide_related=true&show_comments=false&show_user=true&show_reposts=false&visual=true"></iframe></article>
+<article class="card"><div class="cover">BENY JR</div><span class="badge">SELECCIÓN MIXTA</span><h3>Beny Jr — selección urbana</h3><p>Lista comunitaria con varios temas de Beny Jr, Morad y otros artistas.</p><iframe class="embed" title="Beny Jr SoundCloud playlist" scrolling="no" allow="autoplay" src="https://w.soundcloud.com/player/?url=https%3A//soundcloud.com/user-164165395/sets/apple&color=%23b7ff00&auto_play=false&hide_related=true&show_comments=false&show_user=true&show_reposts=false&visual=true"></iframe></article>
+</div>
+<div class="info">Nota: los reproductores son oficiales de SoundCloud. La disponibilidad depende de cada pista, del país y de los permisos del creador. Algunas listas son comunitarias y pueden contener remixes u otros artistas.</div>
+</section>
+<section id="library" class="hidden">
+<div class="hero"><div class="eyebrow">COLECCIÓN</div><h1>BIBLIOTECA</h1><p>Accede a las selecciones musicales integradas en GMUSIC.</p></div>
+<div class="cards" id="libraryCards"></div>
+</section>
+<section id="artists" class="hidden">
+<div class="hero"><div class="eyebrow">DESCUBRE</div><h1>ARTISTAS</h1><p>Elige un artista para abrir su búsqueda de SoundCloud. La búsqueda completa dentro de GMUSIC requiere credenciales oficiales de API.</p></div>
+<div class="artistchips" id="artistChips"></div><div id="results"></div>
+</section>
+<section id="about" class="hidden">
+<div class="hero"><div class="eyebrow">GMUSIC</div><h1>INFO</h1><p>Versión SoundCloud Edition.</p></div>
+<div class="info"><b>Qué funciona:</b><br>• Reproducción integrada mediante reproductores oficiales de SoundCloud.<br>• Selecciones por artista en Inicio y Biblioteca.<br>• Diseño adaptable a móvil y ordenador.<br>• Búsqueda externa directa de artistas y canciones.<br><br><b>Qué falta para el catálogo completo:</b><br>La API oficial exige registrar una aplicación y obtener credenciales; actualmente SoundCloud indica que el acceso API requiere registro de aplicación y credenciales. No se ha añadido ninguna clave privada a esta versión. La reproducción personalizada/DJ también requiere una integración compatible y permisos de streaming.</div>
+</section>
+</main>
+</div>
+<footer>GMUSIC · SOUND ON · Los contenidos musicales y sus derechos pertenecen a sus respectivos creadores y titulares.</footer>
+<script src="https://w.soundcloud.com/player/api.js"></script>
+<script>
+const artists=["Hades66","JC Reyes","Morad","Saiko","Beny Jr","Yung Beef","Eladio Carrión","Anuel AA"];
+const genres=["Trap español","Trap latino","Reguetón clásico","Reguetón nuevo","Drill","Rap español","Hip hop","R&B","Dembow","Afrobeats","House","Techno","Pop urbano","Música chill","Hits virales"];
+const views=["home","library","artists","about"];
+function show(v){views.forEach(x=>document.getElementById(x).classList.toggle("hidden",x!==v));document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("active",b.dataset.view===v));window.scrollTo({top:0,behavior:"smooth"});}
+document.querySelectorAll("nav button").forEach(b=>b.addEventListener("click",()=>show(b.dataset.view)));
+const widgets=new Map();
+function setupWidget(iframe, key){
+ if(!window.SC||!SC.Widget||!iframe)return;
+ const widget=SC.Widget(iframe); widgets.set(key,widget);
+ const panel=iframe.parentElement.querySelector('.player-controls');
+ const status=iframe.parentElement.querySelector('.player-status');
+ const bar=panel?.querySelector('.player-progress'); const time=panel?.querySelector('.player-time');
+ let duration=0, seeking=false;
+ const fmt=(ms)=>{if(!Number.isFinite(ms)||ms<0)ms=0;const n=Math.floor(ms/1000);return `${Math.floor(n/60)}:${String(n%60).padStart(2,'0')}`};
+ widget.bind(SC.Widget.Events.READY,()=>{
+  widget.getDuration(d=>{duration=d||0;if(bar)bar.max=duration||100;});
+  if(status)status.textContent='Listo para reproducir';
+ });
+ widget.bind(SC.Widget.Events.PLAY,()=>{if(status)status.textContent='Reproduciendo';const b=panel?.querySelector('.play-btn');if(b)b.textContent='⏸ PAUSA';});
+ widget.bind(SC.Widget.Events.PAUSE,()=>{if(status)status.textContent='En pausa';const b=panel?.querySelector('.play-btn');if(b)b.textContent='▶ PLAY';});
+ widget.bind(SC.Widget.Events.FINISH,()=>{if(status)status.textContent='Lista terminada';});
+ if(panel){panel.querySelector('.play-btn')?.addEventListener('click',()=>widget.toggle());panel.querySelector('[data-prev]')?.addEventListener('click',()=>widget.prev());panel.querySelector('[data-next]')?.addEventListener('click',()=>widget.next());bar?.addEventListener('input',()=>{seeking=true;widget.seekTo(Number(bar.value));});bar?.addEventListener('change',()=>seeking=false);}
+ const poll=()=>{widget.getPosition(pos=>{widget.getDuration(d=>{duration=d||duration;if(bar&&!seeking&&duration){bar.max=duration;bar.value=pos||0;}if(time)time.textContent=`${fmt(pos)} / ${fmt(duration)}`;});});};
+ setInterval(poll,800);
+}
+function attachControls(){document.querySelectorAll('.embed').forEach((iframe,i)=>{if(iframe.dataset.controlsReady)return;iframe.dataset.controlsReady='1';const key='playlist-'+i;const controls=document.createElement('div');controls.className='player-controls';controls.innerHTML=`<button class="play-btn">▶ PLAY</button><button data-prev>⏮ ANTERIOR</button><button data-next>SIGUIENTE ⏭</button><input class="player-progress" type="range" min="0" max="100" value="0" aria-label="Progreso de la canción"><span class="player-time">0:00 / 0:00</span>`;const status=document.createElement('div');status.className='player-status';status.textContent='Conectando reproductor…';iframe.insertAdjacentElement('afterend',controls);controls.insertAdjacentElement('afterend',status);iframe.addEventListener('load',()=>setupWidget(iframe,key));setTimeout(()=>setupWidget(iframe,key),900);});}
+attachControls();
+function soundcloudEmbedUrl(q){return 'https://w.soundcloud.com/player/?url='+encodeURIComponent('https://soundcloud.com/search/sounds?q='+q)+'&color=%23b7ff00&auto_play=false&hide_related=true&show_comments=false&show_user=true&show_reposts=false&visual=false';}
+function renderSearch(q){if(!q.trim())return;const box=document.getElementById('searchResults');box.innerHTML=`<div class="artist-result"><b>Resultados para: ${escapeHTML(q)}</b><p>Reproduce desde el widget integrado. Si SoundCloud no permite la pista, se mostrará el estado del reproductor.</p><iframe class="embed" title="Búsqueda SoundCloud ${escapeHTML(q)}" scrolling="no" allow="autoplay" src="${soundcloudEmbedUrl(encodeURIComponent(q))}"></iframe></div>`;attachControls();box.scrollIntoView({behavior:'smooth',block:'start'});}
+function soundcloudEmbedUrl(encodedQuery){return `https://w.soundcloud.com/player/?url=https%3A%2F%2Fsoundcloud.com%2Fsearch%2Fsounds%3Fq%3D${encodedQuery}&color=%23b7ff00&auto_play=false&hide_related=true&show_comments=false&show_user=true&show_reposts=false&visual=true`;}
+function escapeHTML(v){return String(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+document.getElementById('genreChips').innerHTML=genres.map(g=>`<button type="button" data-genre="${escapeHTML(g)}">${escapeHTML(g)}</button>`).join('');
+document.getElementById('genreChips').addEventListener('click',e=>{const b=e.target.closest('[data-genre]');if(!b)return;const g=b.dataset.genre;const box=document.getElementById('genreResults');box.innerHTML=`<div class="artist-result"><b>${escapeHTML(g)}</b><p>Resultados musicales de ${escapeHTML(g)}. Reproduce desde el widget de SoundCloud integrado.</p><iframe class="embed" title="${escapeHTML(g)} en SoundCloud" scrolling="no" allow="autoplay" src="${soundcloudEmbedUrl(encodeURIComponent(g))}"></iframe></div>`;attachControls();box.scrollIntoView({behavior:'smooth',block:'start'});});
+document.getElementById('searchBtn').onclick=()=>renderSearch(document.getElementById('query').value);
+document.getElementById('query').addEventListener('keydown',e=>{if(e.key==='Enter')renderSearch(e.target.value)});
+document.getElementById('artistChips').innerHTML=artists.map(a=>`<button type="button" data-artist="${escapeHTML(a)}">${escapeHTML(a)}</button>`).join('');
+document.getElementById('artistChips').addEventListener('click',e=>{const b=e.target.closest('[data-artist]');if(b)artistSearch(b.dataset.artist);});
+function artistSearch(a){const results=document.getElementById('results');results.innerHTML=`<div class="artist-result"><b>${escapeHTML(a)}</b><p>Escucha los resultados de ${escapeHTML(a)} en el reproductor integrado.</p><iframe class="embed" title="Resultados de ${escapeHTML(a)} en SoundCloud" scrolling="no" allow="autoplay" src="${soundcloudEmbedUrl(encodeURIComponent(a))}"></iframe></div>`;attachControls();}
+const cards=[...document.querySelectorAll('#home .card')];document.getElementById('libraryCards').innerHTML=cards.map(c=>c.outerHTML).join('');attachControls();
+</script>
+</body></html>

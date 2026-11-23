@@ -1,0 +1,8 @@
+GMUSIC corregida
+
+Reemplaza el archivo index.html anterior por este.
+La reproducción de SoundCloud usa el widget oficial integrado y su API de control.
+Play/Pause, anterior/siguiente y barra de progreso controlan la playlist del widget.
+SoundCloud no ofrece URLs de audio directas para todas las pistas; por eso esta versión
+no inventa enlaces de audio HTML5 ni intenta extraer streams privados. La reproducción
+requiere conexión y que SoundCloud permita la pista/widget.
